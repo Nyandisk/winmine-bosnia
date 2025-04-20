@@ -8,7 +8,7 @@ constexpr uintptr_t tilesCleared = 0x010057a4; // tiles cleared, used in some ch
 
 constexpr uintptr_t revealTileAddr = 0x01003512;
 typedef void(__stdcall* RevealTile)(int, int);
-RevealTile WM_RevealTile = reinterpret_cast<RevealTile>(revealTileAddr); // reveals a tile at x and y
+RevealTile WM_RevealTile = reinterpret_cast<RevealTile>(revealTileAddr); // reveals @ x,y
 
 constexpr uintptr_t setTileAddr = 0x01002eab;
 typedef void(__stdcall* SetTile)(int, int, BYTE);
@@ -23,7 +23,7 @@ typedef void(__stdcall* FaceRenderWrapper)(int faceState);
 FaceRenderWrapper WM_FaceRenderWrapper = reinterpret_cast<FaceRenderWrapper>(faceRenderWrapperAddr); // wrapper for WM_RenderFace, good bc it does GetDC and ReleaseDC itself
 
 constexpr int pollInterval = static_cast<int>((1.f / 15.f) * 1000); // milliseconds, 15fps should be ok
-bool bosnia = false; // is bosnia mode enabled
+bool bosnia = false; 
 
 HINSTANCE hInst = nullptr;
 HBITMAP hBosnia = nullptr;
@@ -43,9 +43,9 @@ RevealTile originalRevealTile = nullptr;
 static void __stdcall hkRevealTile(int x, int y) {
 	if (bosnia) {
 		*(int*)tilesCleared = 1; // ensure tiles cleared is never 0, otherwise the game moves the mine out of the way
-		WM_SetTile(x, y, MINE_TILE); // set tile to mine
+		WM_SetTile(x, y, MINE_TILE);
 	}
-	originalRevealTile(x, y); // call original function
+	originalRevealTile(x, y); 
 }
 
 RenderFace originalRenderFace = nullptr;
@@ -54,14 +54,14 @@ static void __stdcall hkRenderFace(HDC hdc, int faceState) {
 		BITMAPINFO bmi = {};
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 		bmi.bmiHeader.biWidth = bosniaBMP.bmWidth;
-		bmi.bmiHeader.biHeight = -bosniaBMP.bmHeight; // Negative = top-down
+		bmi.bmiHeader.biHeight = -bosniaBMP.bmHeight; 
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 24;
 		bmi.bmiHeader.biCompression = BI_RGB;
 		SetDIBitsToDevice(hdc, (*(int*)(0x01005b2c) - 24) / 2, 16, 24, 24, 0, 0, 0, 24, bosniaBits, &bmi, DIB_RGB_COLORS); // WindowWidth addr should be 0x01005b2c
 		return;
 	}
-	originalRenderFace(hdc, faceState); // call original function
+	originalRenderFace(hdc, faceState); 
 }
 
 static DWORD WINAPI MainThread(LPVOID lpReserved) {
