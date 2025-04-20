@@ -31,7 +31,7 @@ static DWORD WINAPI MainThread(LPVOID lpReserved) {
 	if (MH_EnableHook((LPVOID)revealTileAddr) != MH_OK) return 1;
 
 	bool last = false;
-    while (true) {
+	while (true) {
 		if ((GetAsyncKeyState('B') & 0x8000) != 0 && !last) {
 			bosnia = !bosnia;
 			last = true;
@@ -39,20 +39,18 @@ static DWORD WINAPI MainThread(LPVOID lpReserved) {
 		else {
 			last = false;
 		}
-        Sleep(pollInterval);
-    }
-    return 0;
+		Sleep(pollInterval);
+	}
+	return 0;
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule,
-    DWORD  ul_reason_for_call,
-    LPVOID lpReserved) {
-    if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		CreateThread(nullptr, 0, MainThread, nullptr, 0, nullptr);
 	}else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
 		FreeConsole();
 		MH_DisableHook((LPVOID)revealTileAddr);
 		MH_Uninitialize();
 	}
-    return TRUE;
+	return TRUE;
 }
