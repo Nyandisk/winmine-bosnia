@@ -6,3 +6,4 @@ good question
 
 ## Usage
 Compile to x86 (32bit) DLL, and inject into running WINMINE process. You can press B for the toggle.
+MinHook (x86) is required for compiling, link against libMinHook.x86.lib.
