@@ -5,5 +5,5 @@ An internal DLL for WINMINE.EXE, that makes the game impossible. Every tile you 
 Inject DLL into WINMINE.EXE process, and toggle bosnia mode with `B`.
 
 ## Compiling
-Compile to x86 (32bit) DLL.
+Compile to 32 bit DLL.
 MinHook (x86) is required for compiling, link against libMinHook.x86.lib.
