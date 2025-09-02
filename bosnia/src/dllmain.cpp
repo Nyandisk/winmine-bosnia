@@ -54,7 +54,7 @@ static void loadBosniaFlag() {
 revealTile originalRevealTile = nullptr;
 static void __stdcall hkRevealTile(int x, int y) {
     if (bosnia) {
-        *reinterpret_cast<int*>(winmine_addr::TilesCleared) = 1; // if the tiles cleared is 1, then the game assumes second move, and won't remove the mine out of the way
+        *reinterpret_cast<int*>(winmine_addr::TilesCleared) = 1; // if the tiles cleared is 1, then the game assumes second move, and won't move the mine out of the way
         
 		int width = getMapWidth();
 		int height = getMapHeight();
