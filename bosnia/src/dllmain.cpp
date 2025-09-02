@@ -5,6 +5,7 @@
 #include "addresses.hpp"
 
 constexpr uint8_t MineTile = 0x80;
+constexpr uint8_t ClearTile = 0x40;
 constexpr int PollInterval = static_cast<int>((1.0f / 15.0f) * 1000);
 constexpr int FaceSize = 24;
 
@@ -20,11 +21,26 @@ renderFace wm_renderFace = reinterpret_cast<renderFace>(winmine_addr::FuncRender
 typedef void(__stdcall* renderFaceWrapper)(int); // faceState but cooler (no manual GetDC, ReleaseDC)
 renderFaceWrapper wm_renderFaceWrapper = reinterpret_cast<renderFaceWrapper>(winmine_addr::FuncRenderFaceWrapper);
 
+typedef int(__stdcall* randomInt)(int); // max
+randomInt wm_randomInt = reinterpret_cast<randomInt>(winmine_addr::FuncRandomInt);
+
 bool bosnia         = false;
 HINSTANCE hInst     = nullptr;
 HBITMAP hBosnia     = nullptr;
 BITMAP bosniaBMP    = {};
 uint8_t* bosniaBits = nullptr;
+
+static int getMapWidth() {
+    return *reinterpret_cast<int*>(winmine_addr::BoardWidth);
+}
+
+static int getMapHeight() {
+    return *reinterpret_cast<int*>(winmine_addr::BoardHeight);
+}
+
+static void updateMineCount(const int value) {
+	*reinterpret_cast<int*>(winmine_addr::MineCount) = value;
+}
 
 static void loadBosniaFlag() {
     HBITMAP hBMP = (HBITMAP)LoadImageA(hInst, MAKEINTRESOURCEA(IDB_BITMAP1), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
@@ -39,7 +55,23 @@ revealTile originalRevealTile = nullptr;
 static void __stdcall hkRevealTile(int x, int y) {
     if (bosnia) {
         *reinterpret_cast<int*>(winmine_addr::TilesCleared) = 1; // if the tiles cleared is 1, then the game assumes second move, and won't remove the mine out of the way
-        wm_setTile(x, y, MineTile);
+        
+		int width = getMapWidth();
+		int height = getMapHeight();
+
+        for (int y = 1; y <= height; y++) {
+            for (int x = 1; x <= width; x++) {
+                wm_setTile(x, y, MineTile);
+            }
+		}
+        
+        // now make it actually playable by setting some random tile to be clear
+		updateMineCount(width * height - 1); // idk if this is really necessary
+		int rx = 1 + wm_randomInt(width);
+        int ry = 1 + wm_randomInt(height);
+		wm_setTile(rx, ry, ClearTile);
+
+        // now its bosnia but playable, great!
     }
     originalRevealTile(x, y);
 }
