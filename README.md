@@ -1,8 +1,8 @@
 # winmine-bosnia
-An internal DLL for WINMINE.EXE, that makes the game impossible. Every tile you click on, gets set to a mine before the game reveals it, therefore everything you now click on, will be a mine.
+An internal DLL for WINMINE.EXE, that makes the game a massive gamble. Everything is a mine... apart from one tile.
 
 ## Usage
-Inject DLL into WINMINE.EXE process, and toggle bosnia mode with `B`.
+Inject DLL into WINMINE.EXE process, and toggle bosnia mode with `B`. (Flag will indicate the mod being active)
 (for example this: https://archive.org/details/minesweeperxp)
 
 ## Compiling
